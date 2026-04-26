@@ -1,1 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Farbanfrage</title>
 
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 48px 20px;
+  font-family: Inter, Arial, sans-serif;
+  color: #3a3a3a;
+  background: transparent;
+}
+
+.card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.kicker {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #777;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.08;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 0 auto;
+  max-width: 590px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.colors {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.color-option {
+  border: 2px solid #e5e5e5;
+  border-radius: 20px;
+  background: #fff;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.color-option.active {
+  border-color: #3a3a3a;
+  box-shadow: 0 0 0 4px rgba(0,0,0,.08);
+}
+
+.color-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,.12);
+}
+
+.color-label {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.selected {
+  display: none;
+  text-align: center;
+  background: #f7f7f7;
+  border-radius: 16px;
+  padding: 12px 16px;
+  font-size: 15px;
+  margin-bottom: 22px;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #dcdcdc;
+  border-radius: 14px;
+  padding: 14px 15px;
+  font-size: 16px;
+  outline: none;
+}
+
+button.submit {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 20px;
+  background: #3a3a3a;
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+button.submit.ready {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.delivery {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #444;
+}
+
+.delivery span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error {
+  display: none;
+  color: #b00020;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.popup-box {
+  max-width: 420px;
+  width: 100%;
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0,0,0,.25);
+}
+
+.popup-box h3 {
+  margin: 0 0 10px;
+  font-size: 26px;
+}
+
+.popup-box p {
+  color: #555;
+}
+
+.popup-box button {
+  border: none;
+  border-radius: 14px;
+  padding: 13px 18px;
+  background: #3a3a3a;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .colors, .inputs {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card {
+    padding: 24px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="header">
+    <p class="kicker">Farbanpassung für Ihre Theke</p>
+    <h2>Wunschfarbe auswählen</h2>
+    <p class="subtitle">
+      Wählen Sie eine dauerhaft verfügbare Farbe für die Aluminium-Legierung Ihrer Theke aus und senden Sie uns Ihre unverbindliche Anfrage.
+    </p>
+  </div>
+
+  <div class="colors">
+    <div class="color-option" onclick="selectColor(this, 'Schwarz')">
+      <div class="color-circle" style="background:#111;"></div>
+      <div class="color-label">Schwarz</div>
+    </div>
+
+    <div class="color-option" onclick="selectColor(this, 'Gold')">
+      <div class="color-circle" style="background:#D4AF37;"></div>
+      <div class="color-label">Gold</div>
+    </div>
+
+    <div class="color-option" onclick="selectColor(this, 'Blau')">
+      <div class="color-circle" style="background:#1E63FF;"></div>
+      <div class="color-label">Blau</div>
+    </div>
+
+    <div class="color-option" onclick="selectColor(this, 'Rot')">
+      <div class="color-circle" style="background:#D92727;"></div>
+      <div class="color-label">Rot</div>
+    </div>
+  </div>
+
+  <div id="selected" class="selected"></div>
+
+  <div class="inputs">
+    <label>
+      E-Mail Adresse
+      <input id="email" type="email" placeholder="Ihre E-Mail aus der Bestellung" oninput="validateForm()" />
+    </label>
+
+    <label>
+      Shopify Bestellnummer
+      <input id="order" type="text" placeholder="z. B. #1234" oninput="validateForm()" />
+    </label>
+  </div>
+
+  <div id="error" class="error"></div>
+
+  <button id="submitBtn" class="submit" onclick="sendRequest()">
+    Anfrage jetzt unverbindlich abschicken
+  </button>
+
+  <p class="delivery">
+    <span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="#3a3a3a" stroke-width="2"/>
+        <path d="M12 7v5l3 2" stroke="#3a3a3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Lieferzeit: ca. 3 Wochen
+    </span>
+  </p>
+</div>
+
+<div id="popup" class="popup">
+  <div class="popup-box">
+    <h3>Danke für Ihre Anfrage</h3>
+    <p>Sie erhalten eine Rückmeldung innerhalb von 24 Stunden.</p>
+    <button onclick="closePopup()">Schließen</button>
+  </div>
+</div>
+
+<script>
+let selectedColor = "";
+
+const WEB3FORMS_ACCESS_KEY = "673c3b9a-a708-4187-a430-d230ab01e012";
+
+function selectColor(element, color) {
+  document.querySelectorAll(".color-option").forEach(el => el.classList.remove("active"));
+  element.classList.add("active");
+  selectedColor = color;
+
+  const selected = document.getElementById("selected");
+  selected.style.display = "block";
+  selected.innerHTML = `Ausgewählte Farbe: <strong>${color}</strong>`;
+
+  validateForm();
+}
+
+function isEmailValid(email) {
+  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
+}
+
+function validateForm() {
+  const email = document.getElementById("email").value.trim();
+  const order = document.getElementById("order").value.trim();
+  const btn = document.getElementById("submitBtn");
+
+  if (selectedColor && isEmailValid(email) && order) {
+    btn.classList.add("ready");
+  } else {
+    btn.classList.remove("ready");
+  }
+}
+
+function sendRequest() {
+  const email = document.getElementById("email").value.trim();
+  const order = document.getElementById("order").value.trim();
+  const error = document.getElementById("error");
+  const btn = document.getElementById("submitBtn");
+
+  error.style.display = "none";
+
+  if (!selectedColor || !isEmailValid(email) || !order) {
+    error.innerText = "Bitte wählen Sie eine Farbe aus und geben Sie eine gültige E-Mail sowie Ihre Bestellnummer ein.";
+    error.style.display = "block";
+    return;
+  }
+
+  btn.innerText = "Anfrage wird gesendet...";
+  btn.disabled = true;
+
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify({
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: "Neue Farbanfrage für Theke",
+      from_name: "Drehtechnik Reich Website",
+      email: email,
+      message: `Neue Farbanfrage
+
+━━━━━━━━━━━━━━
+FARBE: ${selectedColor}
+E-MAIL: ${email}
+BESTELLNUMMER: ${order}
+━━━━━━━━━━━━━━
+
+Diese Anfrage wurde über Ihre Website (drehtechnikreich.com) gesendet.`
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      document.getElementById("popup").style.display = "flex";
+      document.getElementById("email").value = "";
+      document.getElementById("order").value = "";
+      document.querySelectorAll(".color-option").forEach(el => el.classList.remove("active"));
+      document.getElementById("selected").style.display = "none";
+      selectedColor = "";
+    } else {
+      throw new Error();
+    }
+  })
+  .catch(() => {
+    error.innerText = "Die Anfrage konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut.";
+    error.style.display = "block";
+  })
+  .finally(() => {
+    btn.innerText = "Anfrage jetzt unverbindlich abschicken";
+    btn.disabled = false;
+    validateForm();
+  });
+}
+
+function closePopup() {
+  document.getElementById("popup").style.display = "none";
+}
+</script>
+
+</body>
+</html>
